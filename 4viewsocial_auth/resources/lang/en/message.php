@@ -1,0 +1,20 @@
+<?php
+return [
+    'post_saved_successfully' => 'Post saved successfully',
+    'post_deleted_successfully' => 'Post deleted successfully',
+    'post_liked_successfully' => 'Post liked successfully',
+    'post_unliked_successfully' => 'Post unliked successfully',
+    'post_commented_successfully' => 'Post commented successfully',
+    'post_removed_from_favourites' => 'Post removed from favourites',
+    'comment_successfully' => 'Comment successfully!',
+    'user_not_found' => 'User not found',
+    'unfollow_successfully' => 'Unfollow successfully!',
+    'follow_successfully' => 'Follow successfully!',
+    'user_not_found_or_banned' => 'User not found or banned',
+    'password_is_incorrect' => 'Password is incorrect',
+    'invalid_token' => 'Invalid token',
+    'user_already_exists' => 'User already exists',
+    'user_not_found' => 'User not found',
+    'invalid_code' => 'Invalid code',
+    'expired_code' => 'Expired code',
+];
