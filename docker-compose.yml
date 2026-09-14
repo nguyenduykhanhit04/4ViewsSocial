@@ -160,7 +160,7 @@ services:
   # ==========================================
   client_service:
     build:
-      context: ./4viewsocial_client
+      context: ./client-web
       dockerfile: Dockerfile
     container_name: 4viewsocial_client
     restart: unless-stopped
@@ -169,7 +169,7 @@ services:
     depends_on:
       - gateway_service
     volumes:
-      - ./4viewsocial_client:/app
+      - ./client-web:/app
       - /app/node_modules
     networks:
       - social_net

@@ -34,7 +34,7 @@ SERVICES = {
         ]
     },
     "Frontend": {
-        "cwd": BASE_DIR / "4viewsocial_client",
+        "cwd": BASE_DIR / "client-web",
         "commands": [
             # "npm install",
             "npm run dev"
