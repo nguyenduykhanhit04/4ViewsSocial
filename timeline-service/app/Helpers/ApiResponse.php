@@ -16,7 +16,7 @@ class ApiResponse
      */
     public static function success($data = null, string $message = 'Success', int $code = 200): JsonResponse
     {
-        return response()->json([
+        return new JsonResponse([
             'code'    => $code,
             'message' => $message,
             'data'    => $data,
@@ -44,7 +44,7 @@ class ApiResponse
      */
     public static function badRequest(string $message = 'Bad request', $data = null): JsonResponse
     {
-        return response()->json([
+        return new JsonResponse([
             'code'    => 400,
             'message' => $message,
             'data'    => $data,
@@ -59,7 +59,7 @@ class ApiResponse
      */
     public static function unauthorized(string $message = 'Unauthorized'): JsonResponse
     {
-        return response()->json([
+        return new JsonResponse([
             'code'    => 401,
             'message' => $message,
             'data'    => null,
@@ -74,7 +74,7 @@ class ApiResponse
      */
     public static function forbidden(string $message = 'Forbidden'): JsonResponse
     {
-        return response()->json([
+        return new JsonResponse([
             'code'    => 403,
             'message' => $message,
             'data'    => null,
@@ -89,7 +89,7 @@ class ApiResponse
      */
     public static function notFound(string $message = 'Resource not found'): JsonResponse
     {
-        return response()->json([
+        return new JsonResponse([
             'code'    => 404,
             'message' => $message,
             'data'    => null,
@@ -105,7 +105,7 @@ class ApiResponse
      */
     public static function unprocessable(string $message = 'Unprocessable entity', $errors = null): JsonResponse
     {
-        return response()->json([
+        return new JsonResponse([
             'code'    => 422,
             'message' => $message,
             'errors'  => $errors,
@@ -121,21 +121,10 @@ class ApiResponse
      */
     public static function error(string $message = 'Internal server error', int $code = 500): JsonResponse
     {
-        return response()->json([
+        return new JsonResponse([
             'code'    => $code,
             'message' => $message,
             'data'    => null,
         ], $code);
-    }
-
-    /* --- Backward compatibility instance methods --- */
-    public function BadRequest(string $message = 'Bad request'): JsonResponse
-    {
-        return self::badRequest($message);
-    }
-
-    public function InternalServerError(string $message = 'Internal server error'): JsonResponse
-    {
-        return self::error($message, 500);
     }
 }
