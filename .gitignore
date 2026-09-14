@@ -1,0 +1,34 @@
+# Environment variables and secrets
+.env
+.env.*
+.env copy
+!.env.example
+
+# Dependencies
+node_modules/
+vendor/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Laravel specific
+storage/*.key
+storage/logs/*.log
+bootstrap/cache/*.php
+.phpunit.result.cache
+
+# Builds & output
+dist/
+dist-ssr/
+*.local
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Docker data volumes
+mysql_data/
+mongo_data/
