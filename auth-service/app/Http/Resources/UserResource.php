@@ -7,6 +7,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    /**
+     * Chuyển đổi đối tượng người dùng thành mảng dữ liệu JSON trả về client.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -22,8 +28,8 @@ class UserResource extends JsonResource
             'facebook_url'  => $this->facebook_url,
             'thread_url'    => $this->thread_url,
             'instagram_url' => $this->instagram_url,
-            'created_at'    => $this->created_at,
-            'updated_at'    => $this->updated_at,
+            'created_at'    => $this->created_at?->toIso8601String(),
+            'updated_at'    => $this->updated_at?->toIso8601String(),
         ];
     }
 }

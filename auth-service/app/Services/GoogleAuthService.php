@@ -9,10 +9,10 @@ use Exception;
 class GoogleAuthService
 {
     /**
-     * Xác thực và lấy thông tin user từ Google access token.
+     * Xác thực Access Token với máy chủ Google OAuth2 và lấy thông tin tài khoản người dùng.
      *
-     * @param string $accessToken
-     * @return array|null
+     * @param  string  $accessToken  Access Token nhận được từ Google Sign-In SDK phía client
+     * @return array|null  Trả về mảng thông tin user (email, name, picture...) nếu hợp lệ, ngược lại trả về null
      */
     public function getUserInfo(string $accessToken): ?array
     {
@@ -25,10 +25,10 @@ class GoogleAuthService
                 return $response->json();
             }
 
-            Log::warning('Google OAuth verification failed: ' . $response->body());
+            Log::warning('Xác thực Google OAuth thất bại: ' . $response->body());
             return null;
         } catch (Exception $e) {
-            Log::error('GoogleAuthService Error: ' . $e->getMessage());
+            Log::error('Lỗi ngoại lệ trong GoogleAuthService: ' . $e->getMessage());
             return null;
         }
     }

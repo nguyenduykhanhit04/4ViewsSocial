@@ -9,9 +9,27 @@ use Exception;
 
 class AuthService
 {
+    /**
+     * Dịch vụ tương tác với Google OAuth.
+     *
+     * @var \App\Services\GoogleAuthService
+     */
     protected GoogleAuthService $googleAuthService;
+
+    /**
+     * Dịch vụ tương tác với Firebase Authentication.
+     *
+     * @var \App\Services\FirebaseAuthService
+     */
     protected FirebaseAuthService $firebaseAuthService;
 
+    /**
+     * Khởi tạo AuthService với các dependency cần thiết.
+     *
+     * @param  \App\Services\GoogleAuthService  $googleAuthService
+     * @param  \App\Services\FirebaseAuthService  $firebaseAuthService
+     * @return void
+     */
     public function __construct(
         GoogleAuthService $googleAuthService,
         FirebaseAuthService $firebaseAuthService
@@ -21,7 +39,10 @@ class AuthService
     }
 
     /**
-     * Tìm user theo email hoặc username.
+     * Tìm kiếm người dùng dựa trên email hoặc tên đăng nhập (user_name).
+     *
+     * @param  string  $identifier  Địa chỉ email hoặc tên đăng nhập
+     * @return \App\Models\User|null
      */
     public function findByCredentials(string $identifier): ?User
     {
@@ -31,7 +52,11 @@ class AuthService
     }
 
     /**
-     * Xử lý logic đăng nhập bằng username/email & password.
+     * Xử lý nghiệp vụ đăng nhập bằng tài khoản (username/email) và mật khẩu.
+     *
+     * @param  string  $identifier  Tên đăng nhập hoặc email
+     * @param  string  $password    Mật khẩu của người dùng
+     * @return array  Mảng kết quả chứa trạng thái, mã lỗi/dữ liệu token và thông tin người dùng
      */
     public function login(string $identifier, string $password): array
     {
@@ -49,7 +74,7 @@ class AuthService
             return [
                 'success' => false,
                 'code'    => 403,
-                'message' => 'Tài khoản của bạn đã bị khóa.',
+                'message' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
             ];
         }
 
@@ -61,11 +86,11 @@ class AuthService
             ];
         }
 
-        // Tạo token đăng nhập
+        // Tạo API Access Token qua Laravel Sanctum
         $tokenResult = $user->createToken((string) $user->id);
         $user->update(['token' => $tokenResult->accessToken]);
 
-        // Tạo Firebase Token
+        // Tạo Custom Token cho Firebase
         $firebaseToken = $this->firebaseAuthService->createCustomToken($user);
 
         return [
@@ -79,7 +104,10 @@ class AuthService
     }
 
     /**
-     * Xử lý logic đăng ký tài khoản mới.
+     * Xử lý nghiệp vụ đăng ký tài khoản thành viên mới.
+     *
+     * @param  array  $data  Dữ liệu đăng ký đã qua kiểm tra hợp lệ
+     * @return array  Mảng chứa trạng thái và đối tượng người dùng vừa tạo
      */
     public function register(array $data): array
     {
@@ -100,7 +128,10 @@ class AuthService
     }
 
     /**
-     * Xử lý đăng nhập bằng Google OAuth.
+     * Xử lý nghiệp vụ đăng nhập bằng tài khoản Google.
+     *
+     * @param  string  $googleAccessToken  Access token do Google cấp
+     * @return array  Mảng chứa kết quả đăng nhập và token truy cập
      */
     public function loginWithGoogle(string $googleAccessToken): array
     {
@@ -110,14 +141,14 @@ class AuthService
             return [
                 'success' => false,
                 'code'    => 400,
-                'message' => 'Không thể xác thực tài khoản Google. Token không hợp lệ.',
+                'message' => 'Không thể xác thực tài khoản Google. Access Token không hợp lệ.',
             ];
         }
 
         $user = User::where('email', $googleUser['email'])->first();
 
         if (!$user) {
-            // Tạo tài khoản mới từ thông tin Google
+            // Tự động khởi tạo tài khoản nếu lần đầu đăng nhập Google
             $baseUsername = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $googleUser['given_name'] ?? 'user'));
             $userName = $baseUsername . rand(100, 999);
 
@@ -156,9 +187,12 @@ class AuthService
     }
 
     /**
-     * Xử lý đăng xuất.
+     * Xử lý đăng xuất tài khoản và vô hiệu hóa access token hiện tại.
+     *
+     * @param  \App\Models\User|null  $user  Người dùng đang đăng nhập
+     * @return bool Trả về true nếu đăng xuất thành công
      */
-    public function logout($user): bool
+    public function logout(?User $user): bool
     {
         try {
             if ($user && method_exists($user, 'currentAccessToken')) {
@@ -169,7 +203,7 @@ class AuthService
             }
             return true;
         } catch (Exception $e) {
-            Log::error('Logout Error: ' . $e->getMessage());
+            Log::error('Lỗi ngoại lệ khi đăng xuất: ' . $e->getMessage());
             return false;
         }
     }

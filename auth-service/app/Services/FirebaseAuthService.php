@@ -10,18 +10,17 @@ use Exception;
 class FirebaseAuthService
 {
     /**
-     * Sinh Firebase Custom Token cho User để đồng bộ realtime chat/presence.
+     * Sinh Firebase Custom Token từ thông tin User để đồng bộ phiên làm việc trên Firebase (Realtime Database / Firestore).
      *
-     * @param User $user
-     * @return string|null
+     * @param  \App\Models\User  $user  Đối tượng người dùng cần sinh token
+     * @return string|null  Chuỗi JWT Custom Token của Firebase nếu thành công, hoặc null nếu lỗi/chưa cấu hình
      */
     public function createCustomToken(User $user): ?string
     {
         try {
             $credentials = config('firebase.credentials');
             if (empty($credentials) || !file_exists($credentials)) {
-                // Nếu chưa cấu hình file credentials thì log warning và trả về string rỗng
-                Log::info('Firebase credentials not configured or file missing.');
+                Log::info('Chưa cấu hình tệp chứng thực Firebase credentials hoặc tệp không tồn tại.');
                 return null;
             }
 
@@ -30,7 +29,7 @@ class FirebaseAuthService
 
             return $auth->createCustomToken((string) $user->id)->toString();
         } catch (Exception $e) {
-            Log::warning('FirebaseAuthService Error: ' . $e->getMessage());
+            Log::warning('Lỗi ngoại lệ trong FirebaseAuthService: ' . $e->getMessage());
             return null;
         }
     }
