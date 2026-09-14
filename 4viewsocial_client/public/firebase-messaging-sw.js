@@ -1,28 +1,33 @@
 importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js");
 
-// Cấu hình Firebase
+// Đọc cấu hình Firebase từ Query Parameters khi đăng ký Service Worker
+const urlParams = new URLSearchParams(self.location.search);
+
 const firebaseConfig = {
-  apiKey: "AIzaSyD2gbc_1Mpvyx18gjWB3USpn_37ZIENGsQ",
-  authDomain: "viewsocial-f038a.firebaseapp.com",
-  projectId: "viewsocial-f038a",
-  storageBucket: "viewsocial-f038a.firebasestorage.app",
-  messagingSenderId: "764424668528",
-  appId: "1:764424668528:web:fa3fa2ad858d190fba3bb5",
-  measurementId: "G-XDBL137ZSY"
+  apiKey: urlParams.get("apiKey") || "",
+  authDomain: urlParams.get("authDomain") || "",
+  projectId: urlParams.get("projectId") || "",
+  storageBucket: urlParams.get("storageBucket") || "",
+  messagingSenderId: urlParams.get("messagingSenderId") || "",
+  appId: urlParams.get("appId") || "",
+  databaseURL: urlParams.get("databaseURL") || "",
+  measurementId: urlParams.get("measurementId") || "",
 };
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+if (firebaseConfig.apiKey) {
+  firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
 
-// Xử lý thông báo khi app ở chế độ background
-messaging.onBackgroundMessage((payload) => {
-  console.log("Received background message: ", payload);
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: "/firebase-logo.png",
-  };
+  // Xử lý thông báo khi ứng dụng ở chế độ background
+  messaging.onBackgroundMessage((payload) => {
+    console.log("Received background message: ", payload);
+    const notificationTitle = payload.notification?.title || "Thông báo mới";
+    const notificationOptions = {
+      body: payload.notification?.body || "",
+      icon: "/images/logo.png",
+    };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
-});
+    self.registration.showNotification(notificationTitle, notificationOptions);
+  });
+}
