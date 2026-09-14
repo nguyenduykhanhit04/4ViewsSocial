@@ -61,7 +61,7 @@ services:
 
   admin_service:
     build:
-      context: ./4ViewsSocial_API_Admin
+      context: ./admin-service
       dockerfile: Dockerfile
     container_name: 4viewsocial_admin
     restart: unless-stopped
@@ -78,7 +78,7 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - ./4ViewsSocial_API_Admin:/var/www/html
+      - ./admin-service:/var/www/html
       - /var/www/html/vendor
     networks:
       - social_net

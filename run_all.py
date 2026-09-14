@@ -14,7 +14,7 @@ SERVICES = {
         ]
     },
     "Laravel Backend Admin": {
-        "cwd": BASE_DIR / "4ViewsSocial_API_Admin",
+        "cwd": BASE_DIR / "admin-service",
         "commands": [
             "php artisan serve --port=8003"
         ]
