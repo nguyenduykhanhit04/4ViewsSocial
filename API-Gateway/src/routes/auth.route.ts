@@ -1,10 +1,12 @@
-import { Router } from "express";
-import { createProxyHandler } from "../utils/proxyFactory";
-import { config } from "../config/env";
+import { Router } from 'express';
+import { createProxyHandler } from '../proxies/proxy.factory';
+import { config } from '../config/env.config';
 
 const router = Router();
 
-// All non-order routes → auth service
-router.use(createProxyHandler(config.authServiceUrl));
+/**
+ * Điều hướng toàn bộ các request /api/auth/* sang Auth Service (Port 8001).
+ */
+router.use(createProxyHandler('Auth Service', config.authServiceUrl));
 
 export default router;

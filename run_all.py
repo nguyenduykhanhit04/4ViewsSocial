@@ -27,7 +27,7 @@ SERVICES = {
         ]
     },
     "API Gateway": {
-        "cwd": BASE_DIR / "API-Gateway",
+        "cwd": BASE_DIR / "api-gateway",
         "commands": [
             # "npm install",
             "npm run dev"

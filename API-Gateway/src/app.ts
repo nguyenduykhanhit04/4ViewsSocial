@@ -1,56 +1,50 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
-import { config } from './config/env';
+import { config } from './config/env.config';
+import { corsOptions } from './config/cors.config';
+import { requestLogger } from './middlewares/logger.middleware';
+import { errorHandler, notFoundHandler } from './middlewares/error.middleware';
 import apiRoutes from './routes';
 
 const app = express();
 
-// ==========================================
-// 1. MIDDLEWARE KHÔNG ĐỤNG VÀO BODY (Chạy trước)
-// ==========================================
+// ============================================================================
+// 1. GLOBAL MIDDLEWARES (Chạy trước Proxy, không can thiệp Body stream)
+// ============================================================================
+app.use(requestLogger);
+app.use(cors(corsOptions));
 
-// Logger
-app.use(morgan('dev'));
-
-// CORS (Phải ở đầu tiên để trình duyệt không chặn)
-app.use(
-  cors({
-    origin: config.frontendOrigin,
-    credentials: true,
-  }),
-);
-
-console.log('==== GATEWAY CONFIG =====');
-console.log('PORT:', config.port);
-console.log('FRONTEND_ORIGIN:', config.frontendOrigin);
-console.log('ADMIN_SERVICE_URL:', config.adminServiceUrl);
-console.log('AUTH_SERVICE_URL:', config.authServiceUrl);
-console.log('POST_SERVICE_URL:', config.postServiceUrl);
-console.log('CHAT_SERVICE_URL:', config.chatServiceUrl);
-console.log('=========================');
-
-// ==========================================
-// 2. PROXY ROUTES (QUAN TRỌNG: PHẢI Ở ĐÂY)
-// ==========================================
-// Đặt Proxy ở đây để nó nhận luồng dữ liệu (Stream) nguyên vẹn
-// giúp upload file video/ảnh thành công.
+// ============================================================================
+// 2. MICROSERVICE PROXY ROUTES (Phải đặt trước Body Parsers để giữ nguyên Stream)
+// ============================================================================
 app.use('/api', apiRoutes);
 
-// ==========================================
-// 3. BODY PARSERS (Đặt ở dưới cùng)
-// ==========================================
-// Chỉ chạy nếu request không rơi vào Proxy ở trên
-// (Dùng cho các route nội bộ của Gateway nếu có)
+// ============================================================================
+// 3. BODY PARSERS (Chỉ áp dụng cho các route nội bộ của Gateway)
+// ============================================================================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ==========================================
-// 4. OTHER ROUTES
-// ==========================================
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('API Gateway OK');
+// ============================================================================
+// 4. HEALTH CHECK & SYSTEM STATUS
+// ============================================================================
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    name: '4ViewsSocial API Gateway',
+    status: 'ONLINE',
+    port: config.port,
+    timestamp: new Date().toISOString(),
+  });
 });
+
+app.get('/health', (_req: Request, res: Response) => {
+  res.status(200).json({ status: 'healthy' });
+});
+
+// ============================================================================
+// 5. ERROR HANDLERS (Đặt ở cuối cùng)
+// ============================================================================
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

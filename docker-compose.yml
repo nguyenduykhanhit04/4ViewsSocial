@@ -131,7 +131,7 @@ services:
 
   gateway_service:
     build:
-      context: ./API-Gateway
+      context: ./api-gateway
       dockerfile: Dockerfile
     container_name: 4viewsocial_gateway
     restart: unless-stopped
@@ -150,7 +150,7 @@ services:
       - timeline_service
       - chat_service
     volumes:
-      - ./API-Gateway:/app
+      - ./api-gateway:/app
       - /app/node_modules
     networks:
       - social_net
