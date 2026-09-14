@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
                 'full_name'     => 'Administrator',
                 'email'         => 'admin@email.com',
                 'password'      => Hash::make('12345678'),
-                'role'          => 0,
+                'role'          => 0, // Admin
                 'status'        => 0,
                 'online_status' => 0,
                 'created_at'    => now(),
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
                 'full_name'     => 'SangPT',
                 'email'         => 'phamthesang1307@email.com',
                 'password'      => Hash::make('12345678'),
-                'role'          => 0,
+                'role'          => 1, // Client
                 'status'        => 0,
                 'online_status' => 0,
                 'created_at'    => now(),
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
                 'full_name'     => 'QuangJustMe',
                 'email'         => 'nguyenkimquang1612@email.com',
                 'password'      => Hash::make('12345678'),
-                'role'          => 0,
+                'role'          => 1, // Client
                 'status'        => 0,
                 'online_status' => 0,
                 'created_at'    => now(),
@@ -54,7 +54,7 @@ class UserSeeder extends Seeder
                 'full_name'     => 'KhanhPinapple',
                 'email'         => 'nguyenduykhanh121204@email.com',
                 'password'      => Hash::make('12345678'),
-                'role'          => 0,
+                'role'          => 1, // Client
                 'status'        => 0,
                 'online_status' => 0,
                 'created_at'    => now(),
@@ -65,7 +65,7 @@ class UserSeeder extends Seeder
                 'full_name'     => 'DiepHB',
                 'email'         => 'hbdiep2004@email.com',
                 'password'      => Hash::make('12345678'),
-                'role'          => 0,
+                'role'          => 1, // Client
                 'status'        => 0,
                 'online_status' => 0,
                 'created_at'    => now(),

@@ -138,20 +138,35 @@ async function login() {
     if (res.data.code === 200) {
       const { access_token, firebase_token, user_info } = res.data.data;
 
-      // Firebase login
-      await signInWithCustomToken(auth, firebase_token);
-
+      // Lưu token vào storage trước để đảm bảo đăng nhập thành công
       sessionStorage.setItem("access_token", access_token);
+      sessionStorage.setItem("token", access_token);
       sessionStorage.setItem("user_info", JSON.stringify(user_info));
 
       api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
 
-      await saveDeviceToken();
+      // Firebase login (nếu Firebase lỗi/hết hạn thì không chặn đăng nhập)
+      try {
+        if (firebase_token) {
+          await signInWithCustomToken(auth, firebase_token);
+        }
+      } catch (fbErr) {
+        console.warn("Firebase sign-in warning:", fbErr);
+      }
+
+      try {
+        await saveDeviceToken();
+      } catch (tokenErr) {
+        console.warn("Device token save warning:", tokenErr);
+      }
 
       handleRedirect(user_info);
+    } else {
+      alert(res.data.message || "Đăng nhập không thành công.");
     }
   } catch (err) {
-    console.error(err);
+    console.error("Login error:", err);
+    alert(err.response?.data?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản / mật khẩu.");
   } finally {
     loading.value = false;
   }
@@ -169,14 +184,25 @@ async function loginWithGoogle() {
     if (res.data.code === 200) {
       const { access_token, firebase_token, user_info } = res.data.data;
 
-      await signInWithCustomToken(auth, firebase_token);
-
       sessionStorage.setItem("access_token", access_token);
+      sessionStorage.setItem("token", access_token);
       sessionStorage.setItem("user_info", JSON.stringify(user_info));
 
       api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
 
-      await saveDeviceToken();
+      try {
+        if (firebase_token) {
+          await signInWithCustomToken(auth, firebase_token);
+        }
+      } catch (fbErr) {
+        console.warn("Firebase sign-in warning:", fbErr);
+      }
+
+      try {
+        await saveDeviceToken();
+      } catch (tokenErr) {
+        console.warn("Device token save warning:", tokenErr);
+      }
 
       handleRedirect(user_info);
     }

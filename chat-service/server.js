@@ -8,25 +8,43 @@ const registerChatSockets = require('./src/sockets/chat.socket');
 // 1. Kết nối cơ sở dữ liệu MongoDB
 connectDB();
 
-// 2. Khởi tạo HTTP Server & Socket.IO
-const server = http.createServer();
+// 2. Tạo proxy object cho io trước khi khởi tạo HTTP server
+let ioInstance;
+const ioProxy = {
+  to(room) {
+    return {
+      emit(event, data) {
+        if (ioInstance) ioInstance.to(room).emit(event, data);
+      },
+    };
+  },
+  emit(event, data) {
+    if (ioInstance) ioInstance.emit(event, data);
+  },
+};
 
+// 3. Khởi tạo Express App với ioProxy
+const app = createApp(ioProxy);
+
+// 4. Khởi tạo HTTP Server bọc Express App
+const server = http.createServer(app);
+
+// 5. Khởi tạo Socket.IO đính kèm vào HTTP Server
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      callback(null, true);
+    },
     methods: ['GET', 'POST'],
     credentials: true,
   },
 });
+ioInstance = io;
 
-// 3. Đăng ký Express App vào HTTP Server
-const app = createApp(io);
-server.on('request', app);
-
-// 4. Đăng ký sự kiện Socket.IO
+// 6. Đăng ký sự kiện Socket.IO
 registerChatSockets(io);
 
-// 5. Lắng nghe trên Port
+// 7. Lắng nghe trên Port
 server.listen(port, () => {
   console.log('====================================================');
   console.log(`💬 4ViewsSocial Chat Service is running on port ${port}`);

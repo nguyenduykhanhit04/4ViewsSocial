@@ -18,7 +18,11 @@ const httpClient = axios.create({
  */
 httpClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const token =
+      sessionStorage.getItem("access_token") ||
+      sessionStorage.getItem("token") ||
+      localStorage.getItem("access_token") ||
+      localStorage.getItem("token");
     if (token && !config.headers["Authorization"]) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
