@@ -37,7 +37,7 @@ services:
   # ==========================================
   auth_service:
     build:
-      context: ./4viewsocial_auth
+      context: ./auth-service
       dockerfile: Dockerfile
     container_name: 4viewsocial_auth
     restart: unless-stopped
@@ -54,7 +54,7 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - ./4viewsocial_auth:/var/www/html
+      - ./auth-service:/var/www/html
       - /var/www/html/vendor
     networks:
       - social_net

@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 # === CONFIG — CHO PHÉP NHIỀU LỆNH MỖI SERVICE ===
 SERVICES = {
     "Laravel Backend": {
-        "cwd": BASE_DIR / "4viewsocial_auth",
+        "cwd": BASE_DIR / "auth-service",
         "commands": [
             # "composer install",
             "php artisan serve --port=8001"
