@@ -20,7 +20,7 @@ SERVICES = {
         ]
     },
     "Laravel Backend Time Line": {
-        "cwd": BASE_DIR / "4viewsocial_timeline",
+        "cwd": BASE_DIR / "timeline-service",
         "commands": [
             # "composer install",
             "php artisan serve --port=8004"
