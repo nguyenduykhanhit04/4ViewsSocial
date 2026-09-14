@@ -112,7 +112,7 @@ services:
   # ==========================================
   chat_service:
     build:
-      context: ./4viewsocial_api_chat
+      context: ./chat-service
       dockerfile: Dockerfile
     container_name: 4viewsocial_chat
     restart: unless-stopped
@@ -124,7 +124,7 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ./4viewsocial_api_chat:/app
+      - ./chat-service:/app
       - /app/node_modules
     networks:
       - social_net

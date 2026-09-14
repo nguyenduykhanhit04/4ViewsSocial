@@ -41,7 +41,7 @@ SERVICES = {
         ]
     }, 
     "API Chat": {
-        "cwd": BASE_DIR / "4viewsocial_api_chat",
+        "cwd": BASE_DIR / "chat-service",
         "commands": [
             # "composer install",
             "npm run dev"
